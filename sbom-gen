@@ -1,0 +1,18 @@
+#!/bin/sh
+
+image=${1}
+if [ -z $image ]
+then
+  echo Usage: sbom-gen registry/owner/repo:tag
+  echo Example: sbom-gen quay.io/sallyom/syftbom:latest
+  exit 1
+fi
+format=${2:-github}
+CTR_CMD=$(which podman 2>/dev/null)
+
+if [ -z "$CTR_CMD" ]
+then
+  CTR_CMD=$(which docker 2>/dev/null)
+fi
+
+$CTR_CMD run --rm -v $(pwd):/opt:Z quay.io/sallyom/syftbom:latest $image $format
